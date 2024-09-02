@@ -1,0 +1,8 @@
+name: TrenchTools
+version: '1.0'
+main: org.lils.trenchTools.TrenchTools
+api-version: '1.20.4'
+
+depend:
+  - AlpineCore
+  - Itemize
