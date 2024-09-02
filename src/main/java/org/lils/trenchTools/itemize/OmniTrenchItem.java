@@ -24,8 +24,6 @@ import org.lils.trenchTools.config.ItemConfig;
 
 import java.util.Set;
 
-import static com.cryptomorin.xseries.XMaterial.*;
-
 public class OmniTrenchItem implements ItemizeItem {
     private static final OmniTrenchItem INSTANCE = new OmniTrenchItem();
     public static @NotNull OmniTrenchItem get() {
@@ -33,6 +31,18 @@ public class OmniTrenchItem implements ItemizeItem {
     }
 
     private static final NamespacedKey KEY = NamespacedKey.fromString("trenchtools:trench_pick");
+
+    private static final Material PICKAXE = XMaterial.NETHERITE_PICKAXE.isSupported() ?
+            XMaterial.NETHERITE_PICKAXE.parseMaterial() :
+            XMaterial.DIAMOND_PICKAXE.parseMaterial();
+
+    private static final Material AXE = XMaterial.NETHERITE_AXE.isSupported() ?
+            XMaterial.NETHERITE_AXE.parseMaterial() :
+            XMaterial.DIAMOND_AXE.parseMaterial();
+
+    private static final Material SHOVEL = XMaterial.NETHERITE_SHOVEL.isSupported() ?
+            XMaterial.NETHERITE_SHOVEL.parseMaterial() :
+            XMaterial.DIAMOND_SHOVEL.parseMaterial();
 
     private final DefinedConfigItem configItem;
 
@@ -109,6 +119,7 @@ public class OmniTrenchItem implements ItemizeItem {
         if (action != Action.LEFT_CLICK_BLOCK) {
             return;
         }
+
         Block block = event.getClickedBlock();
         if (block == null) {
             return;
@@ -116,18 +127,19 @@ public class OmniTrenchItem implements ItemizeItem {
 
         Material material = block.getType();
         Player player = event.getPlayer();
-        ItemStack item = getItem();
+        ItemStack itemStack = this.getItem();
 
         if (Tag.MINEABLE_PICKAXE.isTagged(material)) {
-            item.setType(NETHERITE_PICKAXE.parseMaterial());
-            player.getInventory().setItemInMainHand(item);
-        } else if (Tag.MINEABLE_AXE.isTagged(material)) {
-            item.setType(NETHERITE_AXE.parseMaterial());
-            player.getInventory().setItemInMainHand(item);
-        } else if (Tag.MINEABLE_SHOVEL.isTagged(material)) {
-            item.setType(NETHERITE_SHOVEL.parseMaterial());
-            player.getInventory().setItemInMainHand(item);
+            itemStack = itemStack.withType(PICKAXE);
         }
+        else if (Tag.MINEABLE_SHOVEL.isTagged(material)) {
+            itemStack = itemStack.withType(SHOVEL);
+        }
+        else if (Tag.MINEABLE_AXE.isTagged(material)) {
+            itemStack = itemStack.withType(AXE);
+        }
+
+        player.getInventory().setItemInMainHand(itemStack);
     }
 
     private void createTrench(Block centerBlock, int radius) {
